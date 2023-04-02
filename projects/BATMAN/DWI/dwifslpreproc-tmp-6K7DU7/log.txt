@@ -1,0 +1,11 @@
+mrconvert /Users/huangqiting/MRI/projects/BATMAN/DWI/dwi_den_unr.mif /Users/huangqiting/MRI/projects/BATMAN/DWI/dwifslpreproc-tmp-6K7DU7/dwi.mif -json_export /Users/huangqiting/MRI/projects/BATMAN/DWI/dwifslpreproc-tmp-6K7DU7/dwi.json
+mrconvert /Users/huangqiting/MRI/projects/BATMAN/DWI/b0_pair.mif /Users/huangqiting/MRI/projects/BATMAN/DWI/dwifslpreproc-tmp-6K7DU7/se_epi.mif
+mrinfo dwi.mif -export_grad_mrtrix grad.b
+mrconvert se_epi.mif topup_in.nii -import_pe_table se_epi_manual_pe_scheme.txt -strides -1,+2,+3,+4 -export_pe_table topup_datain.txt
+topup --imain=topup_in.nii --datain=topup_datain.txt --out=field --fout=field_map.nii.gz --config=/Users/huangqiting/fsl/etc/flirtsch/b02b0.cnf --verbose
+mrinfo dwi.mif -export_pe_eddy applytopup_config.txt applytopup_indices.txt
+mrconvert dwi.mif dwi_pe_0.nii -coord 3 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112 -strides -1,+2,+3,+4 -json_export dwi_pe_0.json
+applytopup --imain=dwi_pe_0.nii --datain=applytopup_config.txt --inindex=1 --topup=field --out=dwi_pe_0_applytopup.nii --method=jac
+mrconvert dwi_pe_0_applytopup.nii.gz dwi_pe_0_applytopup.mif -json_import dwi_pe_0.json
+dwi2mask dwi_pe_0_applytopup.mif - | maskfilter - dilate - | mrconvert - eddy_mask.nii -datatype float32 -strides -1,+2,+3
+mrconvert dwi.mif eddy_in.nii -strides -1,+2,+3,+4 -export_grad_fsl bvecs bvals -export_pe_eddy eddy_config.txt eddy_indices.txt

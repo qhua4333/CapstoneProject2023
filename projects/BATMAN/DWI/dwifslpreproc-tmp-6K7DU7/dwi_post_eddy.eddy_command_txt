@@ -1,0 +1,1 @@
+/Users/huangqiting/fsl/bin/eddy_cpu --imain=eddy_in.nii --mask=eddy_mask.nii --acqp=eddy_config.txt --index=eddy_indices.txt --bvecs=bvecs --bvals=bvals --topup=field --slm=linear --out=dwi_post_eddy --verbose
